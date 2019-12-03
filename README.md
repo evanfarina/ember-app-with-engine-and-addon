@@ -1,57 +1,11 @@
-# repro-loader-app
+This app demonstrates an issue with ember-engines and ember-asset-loader which is that duplicate <meta> tags are generated with the same name ('repro-loader-app/config/asset-manifest'). The issue is likely caused by the fact that both ember-engines and the in-repo addon extend from manifest generator which makes a call to `contentFor`.
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+This is a simple repro app for a larger issue which is that external addons may need to extend from the manifest-generator so that they can produce their own manifest in the case that a host app does not. However, if both the host app and the external addon are generating manifests, there will be two issues:
 
-## Prerequisites
+1. Duplicate, identical <meta> tags (see above)
+2. The engine will throw an error, citing that a manifest with the key (engine-name/config/asset-manifest) was not created.
 
-You will need the following things properly installed on your computer.
-
-* [Git](https://git-scm.com/)
-* [Node.js](https://nodejs.org/) (with npm)
-* [Ember CLI](https://ember-cli.com/)
-* [Google Chrome](https://google.com/chrome/)
-
-## Installation
-
-* `git clone <repository-url>` this repository
-* `cd repro-loader-app`
-* `npm install`
-
-## Running / Development
-
-* `ember serve`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
-* Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
-
-### Code Generators
-
-Make use of the many generators for code, try `ember help generate` for more details
-
-### Running Tests
-
-* `ember test`
-* `ember test --server`
-
-### Linting
-
-* `npm run lint:hbs`
-* `npm run lint:js`
-* `npm run lint:js -- --fix`
-
-### Building
-
-* `ember build` (development)
-* `ember build --environment production` (production)
-
-### Deploying
-
-Specify what it takes to deploy your app.
-
-## Further Reading / Useful Links
-
-* [ember.js](https://emberjs.com/)
-* [ember-cli](https://ember-cli.com/)
-* Development Browser Extensions
-  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
+**Repro steps:**
+1. ember serve
+2. Visit http://localhost:4200/demo-engine
+3. Verify duplicate meta tags for asset-manifest
